@@ -2,10 +2,15 @@ import React from "react";
 import ReactMde from "react-mde";
 import Showdown from "showdown";
 import axios from "axios";
-export default function Editor({ currentNote, updateNote }) {
+import "../editor.css";
+export default function Editor({
+  tempNoteText,
+  setTempNoteText,
+  updateNote,
+  currentNote,
+}) {
   const [selectedTab, setSelectedTab] = React.useState("write");
   const [sendPropmt, setSendPrompt] = React.useState();
-
   const converter = new Showdown.Converter({
     tables: true,
     simplifiedAutoLink: true,
@@ -16,22 +21,28 @@ export default function Editor({ currentNote, updateNote }) {
   function changePrompt(event) {
     setSendPrompt(event.target.value);
   }
-  function sendToTelegram() {
+  async function sendToAgent() {
     const apiUrl =
-      "https://api.telegram.org/bot6387137843:AAGvPvHq2ESUujV7Vd3NEkWTnQ5zZ_wBJkc/sendMessage"; // Replace YOUR_BOT_TOKEN with your actual bot token
+      "https://axw45fudnatl6qzkd4cgd2pj440uyjhd.lambda-url.us-west-1.on.aws/";
 
     const data = {
-      chat_id: "5591930127",
-      text: { sendPropmt },
+      query: `${sendPropmt}`,
     };
-
+    let answer;
     axios
       .post(apiUrl, data)
       .then((response) => {
-        console.log(response.status());
+        answer = response.data.response;
+        updateNote(
+          `${currentNote?.body} \n\n 
+          ------------------------ \n\n
+          Question : ${sendPropmt} \n\n
+           Answer : ${answer} `
+        );
+        console.log("transaction successfull");
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.log(error);
       });
   }
 
@@ -45,7 +56,7 @@ export default function Editor({ currentNote, updateNote }) {
           borderRadius: "5px",
           border: "transparent",
         }}
-        placeholder="enter what you need to save in a note ex"
+        placeholder="enter what you need to save in a note  ex :  summarize lesson 1 for physics"
         onChange={changePrompt}
       ></textarea>
       <button
@@ -58,13 +69,14 @@ export default function Editor({ currentNote, updateNote }) {
           cursor: "pointer",
           margin: "10px",
         }}
-        onClick={sendToTelegram}
+        onClick={sendToAgent}
+        className="submit--button"
       >
         submit
       </button>
       <ReactMde
-        value={currentNote.body}
-        onChange={updateNote}
+        value={tempNoteText}
+        onChange={setTempNoteText}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         generateMarkdownPreview={(markdown) =>
