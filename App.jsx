@@ -5,11 +5,13 @@ import Split from "react-split";
 import { addDoc, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore";
 import { notesCollection, db, userId } from "./firebase";
 import "./style.css";
-
+import "@radix-ui/themes/styles.css";
+import { Flex, Text, Button, Theme } from "@radix-ui/themes";
 export default function App() {
   const [notes, setNotes] = React.useState([]);
   const [currentNoteId, setCurrentNoteId] = React.useState("");
   const [tempNoteText, setTempNoteText] = React.useState("");
+  const [show, setShow] = React.useState(true);
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
@@ -66,25 +68,58 @@ export default function App() {
     const docRef = doc(db, userId, noteId);
     await deleteDoc(docRef);
   }
+  function handleShow() {
+    setShow((prevShow) => !prevShow);
+  }
 
   return (
-    <main>
+    <main
+      style={{
+        position: "relative",
+      }}
+    >
+      <Theme
+        accentColor={show ? "transparent" : "red"}
+        grayColor="slate"
+        radius="large"
+        style={{
+          position: "absolute",
+          top: "1%",
+          left: "0.5%",
+        }}
+      >
+        <Button onClick={handleShow}>
+          <Text>{show ? "<" : ">"} </Text>
+        </Button>
+      </Theme>
       {notes.length > 0 ? (
-        <Split sizes={[30, 70]} direction="horizontal" className="split">
-          <Sidebar
-            notes={sortArr}
-            currentNote={currentNote}
-            setCurrentNoteId={setCurrentNoteId}
-            newNote={createNewNote}
-            deleteNote={deleteNote}
-          />
+        show ? (
+          <Split sizes={[30, 70]} direction="horizontal" className="split">
+            <Sidebar
+              notes={sortArr}
+              currentNote={currentNote}
+              setCurrentNoteId={setCurrentNoteId}
+              newNote={createNewNote}
+              deleteNote={deleteNote}
+            />
+
+            <Editor
+              tempNoteText={tempNoteText}
+              setTempNoteText={setTempNoteText}
+              updateNote={updateNote}
+              currentNote={currentNote}
+              show={show}
+            />
+          </Split>
+        ) : (
           <Editor
             tempNoteText={tempNoteText}
             setTempNoteText={setTempNoteText}
             updateNote={updateNote}
             currentNote={currentNote}
+            show={show}
           />
-        </Split>
+        )
       ) : (
         <div className="no-notes">
           <h1
@@ -92,10 +127,10 @@ export default function App() {
               fontSize: "60px",
             }}
           >
-            You have no notes
+            TAKE EASY AI NOTES 📜
           </h1>
           <button className="first-note" onClick={createNewNote}>
-            Create one now
+            it's free try it out 🚀
           </button>
         </div>
       )}
