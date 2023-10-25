@@ -1,5 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBOqbcxLDmDrLMt24bftCQmV1Ruer71Oqs",
@@ -12,4 +21,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export const notesCollection = collection(db, "notes");
+export let userId;
+if (!localStorage.getItem("userId")) {
+  localStorage.setItem("userId", uuidv4());
+} else {
+  userId = localStorage.getItem("userId");
+}
+
+const userCollection = collection(db, userId);
+
+export const notesCollection = userCollection;

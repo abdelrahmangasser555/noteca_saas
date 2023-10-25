@@ -28,9 +28,7 @@ button:focus {
     height: 100vh;
 }
 
-.sidebar--note {
-    /* display: flex; */
-}
+
 
 .sidebar--header {
     display: flex;
@@ -197,3 +195,72 @@ button:focus {
     top: -7px;
     left: -2px
 } 
+@media screen and (max-width: 768px) {
+
+    /* Apply these styles for screens up to 768px wide (typically tablets) */
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar--header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar--header>h3 {
+        font-size: 1.5rem;
+    }
+
+    .new-note,
+    .first-note {
+        padding: 0.5rem 1rem;
+        font-size: 6rem;
+        height: 1000px;
+        width: 60px;
+    }
+
+    .editor {
+        width: 100%;
+        height: auto;
+    }
+
+    .title {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .title--delete {
+        margin-top: 0.5rem;
+    }
+
+    .no-notes {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .first-note-heading {
+        font-size: 100px;
+    }
+
+    .delete-btn {
+        margin-top: 0.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+
+    /* Apply these styles for screens up to 480px wide (typical mobile phones) */
+    .sidebar--header>h3 {
+        font-size: 1.3rem;
+    }
+
+    .new-note,
+    .first-note {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+        height: 30px;
+    }
+}

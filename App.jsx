@@ -3,7 +3,8 @@ import Sidebar from "./components/Sidebar";
 import Editor from "./components/Editor";
 import Split from "react-split";
 import { addDoc, onSnapshot, doc, deleteDoc, setDoc } from "firebase/firestore";
-import { notesCollection, db } from "./firebase";
+import { notesCollection, db, userId } from "./firebase";
+import "./style.css";
 
 export default function App() {
   const [notes, setNotes] = React.useState([]);
@@ -56,13 +57,13 @@ export default function App() {
   }
 
   async function updateNote(text) {
-    const docRef = doc(db, "notes", currentNoteId);
+    const docRef = doc(db, userId, currentNoteId);
     await setDoc(docRef, { body: text, updatedAt: Date.now() }),
       { merge: true };
   }
 
   async function deleteNote(noteId) {
-    const docRef = doc(db, "notes", noteId);
+    const docRef = doc(db, userId, noteId);
     await deleteDoc(docRef);
   }
 
@@ -86,7 +87,13 @@ export default function App() {
         </Split>
       ) : (
         <div className="no-notes">
-          <h1>You have no notes</h1>
+          <h1
+            style={{
+              fontSize: "60px",
+            }}
+          >
+            You have no notes
+          </h1>
           <button className="first-note" onClick={createNewNote}>
             Create one now
           </button>
