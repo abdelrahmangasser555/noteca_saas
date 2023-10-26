@@ -122,13 +122,7 @@ export default function App() {
         )
       ) : (
         <div className="no-notes">
-          <h1
-            style={{
-              fontSize: "60px",
-            }}
-          >
-            TAKE EASY AI NOTES 📜
-          </h1>
+          <h1>TAKE EASY AI NOTES 📜</h1>
           <button className="first-note" onClick={createNewNote}>
             it's free try it out 🚀
           </button>

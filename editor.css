@@ -25,5 +25,8 @@
     width: 100%;
     margin-left: 0;
   }
+  .editor--input--text{
+    font-size: 0.7rem;
+  }
 }
 

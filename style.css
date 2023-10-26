@@ -105,7 +105,8 @@ button:focus {
 
 .selected-note .text-snippet {
     color: white;
-    font-weight: 700;
+    font-weight: bold;
+    text-decoration: slategray;
 }
 
 .gutter {
@@ -211,13 +212,14 @@ button:focus {
     .sidebar--header>h3 {
         font-size: 1.5rem;
     }
-
+    .sidebar--header{
+        margin-bottom: 6px;
+    }
     .new-note,
     .first-note {
         padding: 0.5rem 1rem;
         font-size: 6rem;
-        height: 1000px;
-        width: 60px;
+        width: 10px;
     }
 
     .editor {
@@ -250,17 +252,38 @@ button:focus {
     }
 }
 
-@media screen and (max-width: 480px) {
 
-    /* Apply these styles for screens up to 480px wide (typical mobile phones) */
-    .sidebar--header>h3 {
-        font-size: 1.3rem;
+@media screen and (max-width : 767px){
+    .sidebar{
+        width: 100vw;
+        height: 100%;
+        overflow-y: scroll;
+    }
+    .text-snippet{
+        font-size: 0.4rem;
+    }
+    .no-notes{
+     height: 100%;
+     width: 100vw;
+     align-items: center;
+    align-items: center;
+    }
+    .no-notes > button{
+        width: auto;
+        height: auto;
+        font-size: 10px;
     }
 
-    .new-note,
-    .first-note {
-        padding: 0.3rem 0.5rem;
-        font-size: 0.7rem;
-        height: 30px;
+    .no-notes > h1{
+        font-size: 20px;
+    }
+    .new-note{
+        overflow: hidden;
+        height: fit-content;
+        width: fit-content;
+        font-size: small;
+        background-color: transparent;
+        color: black;
+        border: solid 1px black;
     }
 }

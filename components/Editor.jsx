@@ -22,36 +22,54 @@ export default function Editor({
     tasklists: true,
     parseImgDimensions: true,
     smoothLivePreview: true,
+    simpleLineBreaks: true,
+    requireSpaceBeforeHeadingText: true,
+    ghCodeBlocks: true,
+    ghMentions: true,
+    literalMidWordAsterisks: true,
+    parseImgDimensions: true, // Repeated (you can remove this line)
+    encodeEmails: true,
+    backslashEscapesHTMLTags: true,
+    emoji: true,
+    simplifiedAutoLink: true, // Repeated (you can remove this line)
+    splitAdjacentBlockQuotes: true,
+    ghAtxHeaderSpace: true,
+    disableForced4SpacesIndentedSublists: true,
   });
+
   const [cursor, setCursor] = React.useState("pointer");
 
   function changePrompt(event) {
     setSendPrompt(event.target.value);
   }
   async function sendToAgent() {
-    const apiUrl =
-      "https://axw45fudnatl6qzkd4cgd2pj440uyjhd.lambda-url.us-west-1.on.aws/";
-    setCursor((prevCursur) => (prevCursur = "wait"));
-    const data = {
-      query: `${sendPropmt}`,
-    };
-    let answer;
-    axios
-      .post(apiUrl, data)
-      .then((response) => {
-        answer = response.data.response;
-        updateNote(
-          `${currentNote?.body} \n\n 
+    if (sendPropmt !== undefined) {
+      const apiUrl =
+        "https://axw45fudnatl6qzkd4cgd2pj440uyjhd.lambda-url.us-west-1.on.aws/";
+      setCursor((prevCursur) => (prevCursur = "wait"));
+      const data = {
+        query: `${sendPropmt}`,
+      };
+      let answer;
+      axios
+        .post(apiUrl, data)
+        .then((response) => {
+          answer = response.data.response;
+          updateNote(
+            `${currentNote?.body} \n\n 
           ------------------------ \n\n
           Question : ${sendPropmt} \n\n
            Answer : ${answer} `
-        );
-        setCursor((prevCursur) => (prevCursur = "pointer"));
-        console.log("transaction successfull");
-      })
-      .catch((error) => {
-        alert(error);
-      });
+          );
+          setCursor((prevCursur) => (prevCursur = "pointer"));
+          console.log("transaction successfull");
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    } else {
+      alert("please fill in the question box");
+    }
   }
 
   return (
@@ -74,8 +92,9 @@ export default function Editor({
             borderRadius: "10px",
             border: "solid 1px grey",
           }}
+          className="editor--input--text"
         ></input>
-        <Theme accentColor="sky" grayColor="slate" radius="large">
+        <Theme accentColor="sky" grayColor="sand" radius="large">
           <Button
             style={{
               marginLeft: "20px",
