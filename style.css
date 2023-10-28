@@ -286,4 +286,7 @@ button:focus {
         color: black;
         border: solid 1px black;
     }
+    .text-snippet{
+        font-size: 10px;
+    }
 }

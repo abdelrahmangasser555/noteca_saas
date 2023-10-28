@@ -16,8 +16,7 @@
   justify-content: space-between;
 }
 .mde{
-  font-size: larger;
-  color: aq;
+  font-size: 200px;
 }
 @media screen and (max-width: 400px) {
   .form-container{
@@ -26,7 +25,9 @@
     margin-left: 0;
   }
   .editor--input--text{
-    font-size: 0.7rem;
+    font-size: 0.55rem;
+    text-align: center;
+    height: fit-content;
   }
 }
 
