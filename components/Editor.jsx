@@ -3,7 +3,7 @@ import ReactMde from "react-mde";
 import Showdown from "showdown";
 import axios from "axios";
 import "../editor.css";
-import { Flex, Text, Button, Theme } from "@radix-ui/themes";
+import { Flex, Text, Button, Theme  } from "@radix-ui/themes";
 
 export default function Editor({
   tempNoteText,
@@ -25,6 +25,9 @@ export default function Editor({
 
   //uploading an image
   const [uploadedImage, setUploadedImage] = React.useState(null);
+
+  // adding state for materials 
+  const [materials, setMaterials] = React.useState("select material");
 
   const [markdownConfig, setMarkdownConfig] = React.useState({
     tables: true,
@@ -69,10 +72,17 @@ export default function Editor({
     url = URL.createObjectURL(imageFile);
     updateNote(`[](${url})`);
   }
+
+  //setting up the material state
+  function handleMaterialChange(event) {
+    setMaterials(event.target.value) ;
+  }
+
+
   async function sendToAgent() {
-    if (sendPropmt !== undefined) {
-      const apiUrl =
-        "https://axw45fudnatl6qzkd4cgd2pj440uyjhd.lambda-url.us-west-1.on.aws/";
+    console.log(sendPropmt)
+    if (sendPropmt !== undefined && materials !== "select material") {
+      const apiUrl = materials === "materialScience" ? "https://5cadcee3rqs43smysaslwakhwu0gsjas.lambda-url.us-west-1.on.aws/" : "https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/";
       setCursor((prevCursur) => (prevCursur = "wait"));
       const data = {
         query: `${sendPropmt}`,
@@ -83,9 +93,9 @@ export default function Editor({
         .then((response) => {
           answer = response.data.response;
           updateNote(
-            `${currentNote?.body} \n\n 
-          ------------------------ \n\n
-          Question : ${sendPropmt} \n\n
+            `${currentNote?.body}
+          ------------------------
+          **Question : ${sendPropmt}**
            Answer : ${answer} `
           );
           setCursor((prevCursur) => (prevCursur = "pointer"));
@@ -103,9 +113,19 @@ export default function Editor({
     <section className="pane editor" style={{ width: "100vw" }}>
       <div>
         <div className="form-container">
+
+
+        <div>
+          <select className= {window.innerWidth < 400 ? "select--box--mobile" : "select--box"} onChange={handleMaterialChange} value = {materials} >
+            <option value="materialScience">materialScience</option>
+            <option value="manufacturing">manufacturing</option>
+          </select>
+        </div>
+
+
           <input
             type="text"
-            placeholder="ask noteka "
+            placeholder="ask a question to take a note "
             onChange={changePrompt}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -123,6 +143,9 @@ export default function Editor({
             }}
             className="editor--input--text"
           ></input>
+
+
+
           <Theme accentColor="sky" grayColor="sand" radius="large">
             <Button
               style={{
@@ -132,12 +155,15 @@ export default function Editor({
                 margin: "10px",
                 cursor: `${cursor}`,
               }}
-              onClick={sendToAgent}
+              onClick={cursor === "pointer" ? () => sendToAgent() : () => {console.log("wait") }}
               className="submit--button"
             >
               {cursor === "wait" ? "loading ..." : "submit"}
             </Button>
           </Theme>
+
+
+
         </div>
         <ReactMde
           value={tempNoteText}
@@ -154,6 +180,8 @@ export default function Editor({
           }}
         />
       </div>
+
+
       {/* <input type="file" accept="image/*" onChange={handleImageUpload} />
       {uploadedImage && <img src={uploadedImage} alt="Uploaded" />} */}
     </section>
