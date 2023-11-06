@@ -1,8 +1,11 @@
-const bubbleChatReact = function() {
-  document.head.insertAdjacentHTML('beforeend', '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">');
+const bubbleChatReact = function () {
+  document.head.insertAdjacentHTML(
+    "beforeend",
+    '<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css" rel="stylesheet">'
+  );
 
   // Inject the CSS
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.innerHTML = `
   .hidden {
     display: none;
@@ -59,10 +62,10 @@ const bubbleChatReact = function() {
   document.head.appendChild(style);
 
   // Create chat widget container
-  const chatWidgetContainer = document.createElement('div');
-  chatWidgetContainer.id = 'chat-widget-container';
+  const chatWidgetContainer = document.createElement("div");
+  chatWidgetContainer.id = "chat-widget-container";
   document.body.appendChild(chatWidgetContainer);
-  
+
   // Inject the HTML
   chatWidgetContainer.innerHTML = `
     <div id="chat-bubble" class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center cursor-pointer text-3xl">
@@ -93,77 +96,76 @@ const bubbleChatReact = function() {
   `;
 
   // Add event listeners
-  const chatInput = document.getElementById('chat-input');
-  const chatSubmit = document.getElementById('chat-submit');
-  const chatMessages = document.getElementById('chat-messages');
-  const chatBubble = document.getElementById('chat-bubble');
-  const chatPopup = document.getElementById('chat-popup');
-  const closePopup = document.getElementById('close-popup');
-  const clearChat = document.getElementById('clear-chat');
+  const chatInput = document.getElementById("chat-input");
+  const chatSubmit = document.getElementById("chat-submit");
+  const chatMessages = document.getElementById("chat-messages");
+  const chatBubble = document.getElementById("chat-bubble");
+  const chatPopup = document.getElementById("chat-popup");
+  const closePopup = document.getElementById("close-popup");
+  const clearChat = document.getElementById("clear-chat");
 
-
-  chatSubmit.addEventListener('click', function() {
-    
+  chatSubmit.addEventListener("click", function () {
     const message = chatInput.value.trim();
     if (!message) return;
-    
+
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    chatInput.value = '';
+    chatInput.value = "";
 
     onUserRequest(message);
-
   });
 
-  chatInput.addEventListener('keyup', function(event) {
-    if (event.key === 'Enter') {
+  chatInput.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
       chatSubmit.click();
     }
   });
 
-  chatBubble.addEventListener('click', function() {
+  chatBubble.addEventListener("click", function () {
     togglePopup();
   });
 
-  closePopup.addEventListener('click', function() {
+  closePopup.addEventListener("click", function () {
     togglePopup();
   });
 
   function togglePopup() {
-    const chatPopup = document.getElementById('chat-popup');
-    chatPopup.classList.toggle('hidden');
-    if (!chatPopup.classList.contains('hidden')) {
-      document.getElementById('chat-input').focus();
+    const chatPopup = document.getElementById("chat-popup");
+    chatPopup.classList.toggle("hidden");
+    if (!chatPopup.classList.contains("hidden")) {
+      document.getElementById("chat-input").focus();
       // scroll to bottom
-      const chatMessages = document.getElementById('chat-messages');
+      const chatMessages = document.getElementById("chat-messages");
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-  }  
-
-  function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (Math.random() * 16) | 0,
-        v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
   }
 
+  function generateUUID() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c === "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  }
 
-  clearChat.addEventListener('click', function() {
-    localStorage.setItem('userID', generateUUID());
-    localStorage.setItem('chatMessages', JSON.stringify([]));
-    chatMessages.innerHTML = '';
+  clearChat.addEventListener("click", function () {
+    localStorage.setItem("userID", generateUUID());
+    localStorage.setItem("chatMessages", JSON.stringify([]));
+    chatMessages.innerHTML = "";
   });
 
-  let messages = localStorage.getItem('chatMessages');
-  let userID = localStorage.getItem('userID');
+  let messages = localStorage.getItem("chatMessages");
+  let userID = localStorage.getItem("userID");
 
   // If no messages found, create a new UUID and an empty array for messages
   if (!messages) {
     userID = generateUUID();
     messages = [];
-    localStorage.setItem('userID', userID);
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
+    localStorage.setItem("userID", userID);
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
   } else {
     messages = JSON.parse(messages);
   }
@@ -192,10 +194,9 @@ const bubbleChatReact = function() {
   //   }
   // }
 
-
   async function fetchWithTimeout(resource, options) {
     // const { timeout = 120000 } = options;
-  
+
     try {
       // const response = await axios({
       //   url: resource,
@@ -205,12 +206,12 @@ const bubbleChatReact = function() {
       // });
 
       const response = await axios.post(resource, options, {
-        timeout: 120000 // Set the timeout for 2 minutes (120,000 milliseconds)
+        timeout: 120000, // Set the timeout for 2 minutes (120,000 milliseconds)
       });
 
       const data = response.data;
       console.log(data);
-  
+
       // Check if data is not empty; if empty, retry the request
       if (data.answer) {
         return data.answer;
@@ -220,22 +221,20 @@ const bubbleChatReact = function() {
     } catch (error) {
       if (axios.isCancel(error)) {
         // Handle timeout or abort scenario
-        console.log('Request timed out or aborted');
+        console.log("Request timed out or aborted");
         // You can handle retry or specific timeout-related actions here
         // For example, retry fetchWithTimeout(resource, options);
       } else {
         // Handle other errors
-        console.error('Error:', error);
+        console.error("Error:", error);
         throw error; // Throw the error to maintain consistency in error handling
       }
     }
   }
-  
-  
 
   function onUserRequest(message) {
     // Handle user request here
-    console.log('User request:', message);
+    console.log("User request:", message);
 
     //url: https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/manufacturing
     // send a post request with json {question, session_id}
@@ -243,31 +242,39 @@ const bubbleChatReact = function() {
     // keep trying until the answer is not empty
 
     // const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/manufacturing';
-    const url = 'https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/';
+    const url =
+      "https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/";
     // const url = 'https://wunvu7arb4.execute-api.us-west-1.amazonaws.com/test';
     const data = { question: message, session_id: userID };
 
-    fetchWithTimeout(url, data
+    fetchWithTimeout(
+      url,
+      data
       // method: 'POST',
       // body: JSON.stringify(data),
       // headers: {
       //   'Content-Type': 'application/json'
       // },
       // timeout: 120000
-    // })
+      // })
     )
       .then((data) => {
-        messages.push({ user: userID, type: 'user', text: message, timestamp: new Date() });
-        localStorage.setItem('chatMessages', JSON.stringify(messages));
+        messages.push({
+          user: userID,
+          type: "user",
+          text: message,
+          timestamp: new Date(),
+        });
+        localStorage.setItem("chatMessages", JSON.stringify(messages));
         reply(data);
       })
       .catch((error) => {
         reply("An Error Occured. Please try again");
       });
-  
+
     // Display user message
-    const messageElement = document.createElement('div');
-    messageElement.className = 'flex justify-end mb-3';
+    const messageElement = document.createElement("div");
+    messageElement.className = "flex justify-end mb-3";
 
     const formattedMessage = message.replace(/\n/g, "<br>");
 
@@ -279,8 +286,8 @@ const bubbleChatReact = function() {
     chatMessages.appendChild(messageElement);
 
     // add dots reply from the bot
-    const dotsElement = document.createElement('div');
-    dotsElement.className = 'flex justify-start mb-3';
+    const dotsElement = document.createElement("div");
+    dotsElement.className = "flex justify-start mb-3";
 
     dotsElement.innerHTML = `
     <div class="flex items-center justify-center mt-8">
@@ -294,24 +301,30 @@ const bubbleChatReact = function() {
     chatMessages.appendChild(dotsElement);
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
-  
-    chatInput.value = '';
-  }
-  
-  function reply(message) {
 
+    chatInput.value = "";
+  }
+
+  function reply(message) {
     // remove dots reply from the bot (all of them) (because sometimes there are multiple dots replies)
-    const dotsElements = document.getElementsByClassName('flex justify-start mb-3');
+    const dotsElements = document.getElementsByClassName(
+      "flex justify-start mb-3"
+    );
     for (let i = 0; i < dotsElements.length; i++) {
       dotsElements[i].remove();
     }
 
-    messages.push({ user: 'bot', type: 'bot', text: message, timestamp: new Date() });
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
+    messages.push({
+      user: "bot",
+      type: "bot",
+      text: message,
+      timestamp: new Date(),
+    });
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
 
-    const chatMessages = document.getElementById('chat-messages');
-    const replyElement = document.createElement('div');
-    replyElement.className = 'flex mb-3';
+    const chatMessages = document.getElementById("chat-messages");
+    const replyElement = document.createElement("div");
+    replyElement.className = "flex mb-3";
 
     const formattedMessage = message.replace(/\n/g, "<br>");
 
@@ -326,19 +339,24 @@ const bubbleChatReact = function() {
 
   function loadMessages() {
     // Retrieve stored messages from localStorage
-    messages = JSON.parse(localStorage.getItem('chatMessages'));
-  
+    messages = JSON.parse(localStorage.getItem("chatMessages"));
+
     if (messages) {
       // Loop through messages and display them in the chat UI
       messages.forEach((msg) => {
-        const chatMessages = document.getElementById('chat-messages');
-        const messageElement = document.createElement('div');
-  
+        const chatMessages = document.getElementById("chat-messages");
+        const messageElement = document.createElement("div");
+
         // Create and display message elements in the chat UI
         // Adjust this part based on your existing UI code structure
-        messageElement.className = msg.type === 'user' ? 'flex justify-end mb-3' : 'flex mb-3';
+        messageElement.className =
+          msg.type === "user" ? "flex justify-end mb-3" : "flex mb-3";
         messageElement.innerHTML = `
-          <div class="${msg.type === 'user' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'} rounded-lg py-2 px-4 max-w-[70%]">
+          <div class="${
+            msg.type === "user"
+              ? "bg-gray-800 text-white"
+              : "bg-gray-200 text-black"
+          } rounded-lg py-2 px-4 max-w-[70%]">
             ${msg.text}
           </div>
         `;
@@ -347,10 +365,8 @@ const bubbleChatReact = function() {
       });
     }
   }
-  
+
   // Call the function to load messages when the website loads
   window.onload = loadMessages;
-  
-}
+};
 bubbleChatReact();
-
