@@ -38,3 +38,4 @@ coverage/
 # Remove the '#' at the beginning of the lines below if you want to use npm
 # /node_modules
 # /web_modules
+old_bubble

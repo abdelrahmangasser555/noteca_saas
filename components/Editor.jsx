@@ -12,6 +12,7 @@ export default function Editor({
   updateNote,
   currentNote,
   show,
+  noteId,
 }) {
   // the state for the tabs
   const [selectedTab, setSelectedTab] = React.useState("write");
@@ -32,21 +33,19 @@ export default function Editor({
 
   const [markdownConfig, setMarkdownConfig] = React.useState({
     tables: true,
-    simplifiedAutoLink: true,
     strikethrough: true,
     tasklists: true,
-    parseImgDimensions: true,
     smoothLivePreview: true,
     simpleLineBreaks: true,
     requireSpaceBeforeHeadingText: true,
     ghCodeBlocks: true,
     ghMentions: true,
     literalMidWordAsterisks: true,
-    parseImgDimensions: true, // Repeated (you can remove this line)
+    parseImgDimensions: true,
     encodeEmails: true,
     backslashEscapesHTMLTags: true,
     emoji: true,
-    simplifiedAutoLink: true, // Repeated (you can remove this line)
+    simplifiedAutoLink: true,
     splitAdjacentBlockQuotes: true,
     ghAtxHeaderSpace: true,
     disableForced4SpacesIndentedSublists: true,
@@ -83,15 +82,20 @@ export default function Editor({
     if (sendPropmt !== undefined && materials !== "") {
       const apiUrl =
         materials === "materialScience"
-          ? "https://5cadcee3rqs43smysaslwakhwu0gsjas.lambda-url.us-west-1.on.aws/"
-          : "https://gk2t3n5zt2g73bdnofjnou7u7m0oadaq.lambda-url.us-west-1.on.aws/";
+          ? "any url"
+          : "http://localhost:8000/stream";
+
+      console.log("the material is ${materials} and the apiURL is ${apiUrl}");
       setCursor((prevCursur) => (prevCursur = "wait"));
-      const data = {
-        query: `${sendPropmt}`,
-      };
+      let data;
+      if (materials !== "materialScience") {
+        data = { question: sendPropmt, session_id: noteId };
+      } else {
+        data = { query: sendPropmt };
+      }
       let answer;
       axios
-        .post(apiUrl, data)
+        .post(apiUrl, JSON.stringify(data))
         .then((response) => {
           answer = response.data.response;
           updateNote(
@@ -105,6 +109,7 @@ export default function Editor({
         })
         .catch((error) => {
           alert(error);
+          setCursor((prevCursur) => (prevCursur = "pointer"));
         });
     } else {
       alert("please fill in the question box");
@@ -157,7 +162,6 @@ export default function Editor({
               style={{
                 marginLeft: "20px",
                 padding: "5px  20px",
-                cursor: "pointer",
                 margin: "10px",
                 cursor: `${cursor}`,
               }}
